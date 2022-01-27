@@ -2,7 +2,7 @@
 
 function unary(fn) {
     return function firstArgument( arg ) {
-        fn( arg );
+        return fn( arg );
     }
 }
 
