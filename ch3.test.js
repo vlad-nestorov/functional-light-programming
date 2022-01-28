@@ -1,4 +1,6 @@
-const unary = require('./index.js');
+const {
+    unary, curry, partial
+} = require('./index.js');
 
 it('should pass only a single argument', function () {
     const mockFn = jest.fn().mockReturnValue('mockResult');
@@ -31,11 +33,6 @@ it('changing behavior of parseInt by passing single argument leads to expected r
 });
 
 it('should apply partial ', function () {
-    function partial(fn, ...args) {
-        return function partialFn(...remainingArgs) {
-            return fn(...args, ...remainingArgs)
-        }
-    }
 
     const mockFn = jest.fn();
 
@@ -48,31 +45,15 @@ it('should apply partial ', function () {
 });
 
 it('should curry a function', function () {
-    function partial(fn, ...args) {
-        return function partialFn(...remainingArgs) {
-            return fn(...args, ...remainingArgs)
-        }
-    }
 
-    function curry(fn, arity = fn.length) {
-        return arity < 2 ? fn :
-            function partialCurry( arg ) {
-                return curry( partial(fn, arg), --arity  );
-            }
-    }
+    const mockFn = jest.fn().mockReturnValue('expectedReturn');
 
-    function concat(x, y, z) {
-        return x + y + z;
-    }
-
-
-    const curriedFn = curry( concat, 3 );
-
+    const curriedFn = curry( mockFn, 3 );
 
     expect(
         curriedFn("hello")("world")("here's")
-    ).toEqual("helloworldhere's")
+    ).toEqual("expectedReturn")
 
-
+    expect(mockFn).lastCalledWith("hello", "world", "here's");
 
 });
