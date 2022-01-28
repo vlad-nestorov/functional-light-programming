@@ -19,6 +19,13 @@ function curry(fn, arity) {
         }
 }
 
+function looseCurry(fn, arity) {
+    return arity < 2 ? fn :
+        function partialCurry( ...args ) {
+            return curry( partial(fn, ...args), arity - args.length  );
+        }
+}
+
 module.exports = {
-    unary, partial, curry
+    unary, partial, curry, looseCurry
 };

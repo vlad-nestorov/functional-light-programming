@@ -1,5 +1,5 @@
 const {
-    unary, curry, partial
+    unary, curry, partial, looseCurry
 } = require('./index.js');
 
 it('should pass only a single argument', function () {
@@ -52,6 +52,21 @@ it('should curry a function', function () {
 
     expect(
         curriedFn("hello")("world")("here's")
+    ).toEqual("expectedReturn")
+
+    expect(mockFn).lastCalledWith("hello", "world", "here's");
+
+});
+
+
+it('should loosely curry a function', function () {
+
+    const mockFn = jest.fn().mockReturnValue('expectedReturn');
+
+    const curriedFn = looseCurry( mockFn, 3 );
+
+    expect(
+        curriedFn("hello", "world")("here's")
     ).toEqual("expectedReturn")
 
     expect(mockFn).lastCalledWith("hello", "world", "here's");
