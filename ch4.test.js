@@ -4,9 +4,9 @@ describe('ch4 functions', () => {
     it.each([
         { fn: compose },
         { fn: compose2 },
-        { fn: compose3 },
+        { fn: compose3, singleArgumentPassed: true },
         { fn: compose4 }
-    ])('$fn.name should compose functions in the correct order', function ({fn: fnToTest}) {
+    ])('$fn.name should compose functions in the correct order', function ({fn: fnToTest, singleArgumentPassed}) {
         const mockFn1 = jest.fn().mockReturnValue(1);
         const mockFn2 = jest.fn().mockReturnValue(2);
         const mockFn3 = jest.fn().mockReturnValue(3);
@@ -17,7 +17,9 @@ describe('ch4 functions', () => {
         expect(composedFn("some", "args")).toBe(1);
 
         // mockFn3 is invoked first with the pipedFn arguments
-        expect(mockFn3).lastCalledWith("some", "args");
+        expect(mockFn3).lastCalledWith(
+            ... singleArgumentPassed ? ["some"] : ["some", "args"]
+        );
         // mockFn2 gets called with output from mockFn3
         expect(mockFn2).lastCalledWith(3);
         expect(mockFn1).lastCalledWith(2);
