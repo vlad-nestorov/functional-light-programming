@@ -1,11 +1,13 @@
-const { compose, compose2, compose3, compose4, pipe } = require('./index.js');
+const { compose, compose2, compose3, compose4, compose3Equivalent, compose4Equivalent, pipe } = require('./index.js');
 
 describe('ch4 functions', () => {
     it.each([
         { fn: compose },
         { fn: compose2 },
         { fn: compose3, singleArgumentPassed: true },
-        { fn: compose4 }
+        { fn: compose3Equivalent, singleArgumentPassed: true },
+        { fn: compose4 },
+        { fn: compose4Equivalent }
     ])('$fn.name should compose functions in the correct order', function ({fn: fnToTest, singleArgumentPassed}) {
         const mockFn1 = jest.fn().mockReturnValue(1);
         const mockFn2 = jest.fn().mockReturnValue(2);

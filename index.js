@@ -72,6 +72,24 @@ function compose4(...fns) {
     } );
 }
 
+// compose3(fn1, fn2, fn3) equivalent:
+function compose3Equivalent(fn1, fn2, fn3) {
+    return function composed3(result) {
+        return fn1( fn2( fn3(result) ) );
+    }
+}
+
+// compose4(fn1, fn2, fn3) equivalent:
+function compose4Equivalent(fn1, fn2, fn3) {
+    return function composed41(...args) {
+        return fn1( function composed42(...args){
+            return fn2( fn3(...args));
+        }(...args))
+    }
+
+}
+
+
 function pipe(...fnArgs) {
     // Not handling case where no function arguments passed
     return function piped(...args) {
@@ -85,5 +103,5 @@ function pipe(...fnArgs) {
 }
 
 module.exports = {
-    unary, partial, curry, looseCurry, compose, compose2, compose3, compose4, pipe
+    unary, partial, curry, looseCurry, compose, compose2, compose3, compose4, compose3Equivalent, compose4Equivalent, pipe
 };
