@@ -28,7 +28,7 @@ function looseCurry(fn, arity) {
 
 // Ch4
 
-function pipe(...fnArgs) {
+function compose(...fnArgs) {
     // Not handling case where no function arguments passed
     return function piped(...args) {
         // inner-most result
@@ -40,6 +40,18 @@ function pipe(...fnArgs) {
    }
 }
 
+function pipe(...fnArgs) {
+    // Not handling case where no function arguments passed
+    return function composed(...args) {
+        // inner-most result
+        let result = fnArgs[0](...args);
+        for (let i = 1; i < fnArgs.length; i++) {
+            result = fnArgs[i](result)
+        }
+        return result;
+    }
+}
+
 module.exports = {
-    unary, partial, curry, looseCurry, pipe
+    unary, partial, curry, looseCurry, compose, pipe
 };
