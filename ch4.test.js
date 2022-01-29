@@ -1,11 +1,14 @@
-const { compose, pipe } = require('./index.js');
+const { compose, compose2, pipe } = require('./index.js');
 
-it('should compose functions in the correct order', function () {
+it.each([
+    { fn: compose },
+    { fn: compose2 }
+])('$fn.name should compose functions in the correct order', function ({fn: fnToTest}) {
     const mockFn1 = jest.fn().mockReturnValue(1);
     const mockFn2 = jest.fn().mockReturnValue(2);
     const mockFn3 = jest.fn().mockReturnValue(3);
 
-    const composedFn = compose(mockFn1, mockFn2, mockFn3);
+    const composedFn = fnToTest(mockFn1, mockFn2, mockFn3);
 
     // mockFn1 invoked last and it's result returned from the piped function
     expect(composedFn("some", "args")).toBe(1);
