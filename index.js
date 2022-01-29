@@ -52,6 +52,26 @@ function compose2(...fnArgs) {
     }
 }
 
+// getify's version of compose, innermost call should not support multiple arguments.
+function compose3(...fns) {
+    return function composed(result){
+        return [...fns].reverse().reduce( function reducer(result,fn){
+            return fn( result );
+        }, result );
+    };
+}
+
+// getify's version - should allow for passing of multiple arguments.
+// calling reducer without initial value will take the first item of the array as the initial value and skip accumulating it.
+// note the reducer now returns the function to invoke. In compose3 the reducer returns the result of the invocation.
+function compose4(...fns) {
+    return fns.reverse().reduce( function reducer(fn1,fn2){
+        return function composed(...args){
+            return fn2( fn1( ...args ) );
+        };
+    } );
+}
+
 function pipe(...fnArgs) {
     // Not handling case where no function arguments passed
     return function piped(...args) {
@@ -65,5 +85,5 @@ function pipe(...fnArgs) {
 }
 
 module.exports = {
-    unary, partial, curry, looseCurry, compose, compose2, pipe
+    unary, partial, curry, looseCurry, compose, compose2, compose3, compose4, pipe
 };
