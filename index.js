@@ -128,17 +128,20 @@ function imperative(ajax, output) {
 function tacit(ajax, output) {
     let getPerson = curry( partial( ajax, "http://some.api/person" ), 2);
     let getLastOrder = partial( ajax, "http://some.api/order", { id: -1 } );
-    let getProperty = ( property ) => ( object ) => object[property];
+    let prop = ( name, object ) => object[name];
+    let makeObjectWithProp = (name, value ) => ({[name]: value});
+
     let invoke = ( args ) => ( fn ) => fn(args);
 
 
     getLastOrder(
         pipe(
-            getProperty('personId'),
+            partial(prop, 'personId'),
+            partial(makeObjectWithProp, 'id'),
             getPerson,
             invoke(
                 pipe(
-                    getProperty('name'),
+                    partial(prop, 'name'),
                     output
                 )
             )
