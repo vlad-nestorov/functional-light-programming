@@ -15,20 +15,14 @@ describe('ch4 functions', () => {
 
         fnToTest(ajax, output);
 
-        expect(ajax).toBeCalledTimes(1);
-        let [url,data,callback] = ajax.mock.calls.pop();
-        expect([url, data]).toEqual([
-            "http://some.api/order", { id: -1 }
-        ])
+        expect(ajax).toBeCalledWith("http://some.api/order", { id: -1 }, expect.any(Function));
 
+        let [,,callback] = ajax.mock.calls.pop();
         callback({personId: 4});
 
-        expect(ajax).toBeCalledTimes(1);
-        [url,data,callback] = ajax.mock.calls.pop();
-        expect([url, data]).toEqual([
-            "http://some.api/person", { id: 4 }
-        ])
+        expect(ajax).toBeCalledWith("http://some.api/person", { id: 4 }, expect.any(Function));
 
+        [,,callback] = ajax.mock.calls.pop();
         callback({name: 'Fred'});
 
         expect(output).toBeCalledWith('Fred');
