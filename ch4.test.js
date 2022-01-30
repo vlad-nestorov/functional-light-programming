@@ -1,13 +1,46 @@
-const { compose, compose2, compose3, compose4, compose3Equivalent, compose4Equivalent, pipe } = require('./index.js');
+const {
+    compose, compose2, compose3, compose4, compose3Equivalent, compose4Equivalent, pipe,
+    imperative, tacit
+} = require('./index.js');
 
 describe('ch4 functions', () => {
+
     it.each([
-        { fn: compose },
-        { fn: compose2 },
-        { fn: compose3, singleArgumentPassed: true },
-        { fn: compose3Equivalent, singleArgumentPassed: true },
-        { fn: compose4 },
-        { fn: compose4Equivalent }
+        {fn: imperative},
+        {fn: tacit},
+    ])('$fn.name should print the order owner\'s name', function ({fn: fnToTest}) {
+
+        const ajax = jest.fn();
+        const output = jest.fn();
+
+        fnToTest(ajax, output);
+
+        expect(ajax).toBeCalledTimes(1);
+        let [url,data,callback] = ajax.mock.calls.pop();
+        expect([url, data]).toEqual([
+            "http://some.api/order", { id: -1 }
+        ])
+
+        callback({personId: 4});
+
+        expect(ajax).toBeCalledTimes(1);
+        [url,data,callback] = ajax.mock.calls.pop();
+        expect([url, data]).toEqual([
+            "http://some.api/person", { id: 4 }
+        ])
+
+        callback({name: 'Fred'});
+
+        expect(output).toBeCalledWith('Fred');
+    });
+
+    it.each([
+        {fn: compose},
+        {fn: compose2},
+        {fn: compose3, singleArgumentPassed: true},
+        {fn: compose3Equivalent, singleArgumentPassed: true},
+        {fn: compose4},
+        {fn: compose4Equivalent}
     ])('$fn.name should compose functions in the correct order', function ({fn: fnToTest, singleArgumentPassed}) {
         const mockFn1 = jest.fn().mockReturnValue(1);
         const mockFn2 = jest.fn().mockReturnValue(2);
@@ -20,7 +53,7 @@ describe('ch4 functions', () => {
 
         // mockFn3 is invoked first with the pipedFn arguments
         expect(mockFn3).lastCalledWith(
-            ... singleArgumentPassed ? ["some"] : ["some", "args"]
+            ...singleArgumentPassed ? ["some"] : ["some", "args"]
         );
         // mockFn2 gets called with output from mockFn3
         expect(mockFn2).lastCalledWith(3);
@@ -44,3 +77,5 @@ describe('ch4 functions', () => {
         expect(mockFn3).lastCalledWith(2);
     });
 });
+
+
