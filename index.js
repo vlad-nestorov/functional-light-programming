@@ -1,3 +1,5 @@
+"use strict";
+
 // Ch 3 FP utility functions
 
 function unary(fn) {
@@ -150,7 +152,23 @@ function tacit(ajax, output) {
 }
 
 
+// Ch 8 - recursion
+
+// Proper Tail Calls
+
+function isOdd(n) {
+    return n === 0 ? false : isEven(n - 1);
+}
+
+function isEven(n) {
+    return n === 0 ? true : isOdd(n - 1);
+}
+
+// This should work but it seems like tail call optimization is discontinued in V8: https://stackoverflow.com/questions/42788139/es6-tail-recursion-optimisation-stack-overflow/42788286#42788286
+//isOdd(33333)
+
 module.exports = {
     unary, partial, curry, looseCurry, compose, compose2, compose3, compose4, compose3Equivalent, compose4Equivalent, pipe,
-    imperative, tacit
+    imperative, tacit,
+    isOdd, isEven
 };
