@@ -167,8 +167,32 @@ function isEven(n) {
 // This should work but it seems like tail call optimization is discontinued in V8: https://stackoverflow.com/questions/42788139/es6-tail-recursion-optimisation-stack-overflow/42788286#42788286
 //isOdd(33333)
 
+function trampoline(fn) {
+    return function trampolined(...args) {
+        let result = fn(...args);
+
+        while (result instanceof Function ) {
+            result = result();
+        }
+
+        return result;
+    }
+}
+
+function isOddTramp(n) {
+    console.trace(n);
+    return n === 0 ? false : () => isEvenTramp(n - 1);
+}
+
+function isEvenTramp(n) {
+    return n === 0 ? true : () => isOddTramp(n - 1);
+}
+
+
+const isOddV2 = trampoline(isOddTramp);
+
 module.exports = {
     unary, partial, curry, looseCurry, compose, compose2, compose3, compose4, compose3Equivalent, compose4Equivalent, pipe,
     imperative, tacit,
-    isOdd, isEven
+    isOdd, isEven, isOddV2
 };
